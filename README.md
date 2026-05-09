@@ -10,8 +10,8 @@ The plugin was originally migrated from the Emby repository and adapted to funct
 
 Install the plugin via the Jellyfin plugin repository. Navigate to the **Plugins** section of the admin dashboard and add the following repository to receive stable builds of this plugin:
 
-- **Repo name:** Last.fm Stable  
-- **Repo URL:** https://raw.githubusercontent.com/danielfariati/jellyfin-plugin-lastfm/refs/heads/master/manifest.json
+- **Repo name:** Last.fm (un)Stable - for personal use until mainline fixes the issue  
+- **Repo URL:** https://raw.githubusercontent.com/bananz0/jellyfin-plugin-lastfm/refs/heads/master/manifest.json
 
 Restart the Jellyfin server after installation.
 
