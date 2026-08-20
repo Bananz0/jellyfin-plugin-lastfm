@@ -16,13 +16,13 @@
             public static string TrackLove        = "track.love";
             public static string TrackUnlove      = "track.unlove";
             public static string GetLovedTracks   = "user.getLovedTracks";
-            public static string GetTracks        = "library.getTracks";
+            public static string GetTopTracks     = "user.getTopTracks";
         }
 
         public static class Keys
         {
-            public static string LastfmApiKey     = "cb3bdcd415fcb40cd572b137b2b255f5";
-            public static string LastfmApiSecret = "3a08f9fad6ddc4c35b0dce0062cecb5e";
+            public static string LastfmApiKey    => Plugin.Instance?.PluginConfiguration?.ApiKey    ?? string.Empty;
+            public static string LastfmApiSecret => Plugin.Instance?.PluginConfiguration?.ApiSecret ?? string.Empty;
         }
     }
 }

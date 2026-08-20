@@ -267,32 +267,17 @@
             return await Get<GetLovedTracksRequest, LovedTracksResponse>(request, cancellationToken);
         }
 
-        public async Task<GetTracksResponse> GetTracks(LastfmUser user, MusicArtist artist, CancellationToken cancellationToken)
+        public async Task<GetTracksResponse> GetTopTracks(LastfmUser user, CancellationToken cancellationToken, int page = 1, int limit = 1000)
         {
             var request = new GetTracksRequest
             {
-                User = user.Username,
-                Artist = artist.Name,
+                User   = user.Username,
                 ApiKey = Strings.Keys.LastfmApiKey,
-                Method = Strings.Methods.GetTracks,
-                Limit = 1000,
+                Method = Strings.Methods.GetTopTracks,
+                Period = "overall",
+                Limit  = limit,
+                Page   = page,
                 Secure = true
-            };
-
-            return await Get<GetTracksRequest, GetTracksResponse>(request, cancellationToken);
-        }
-
-        public async Task<GetTracksResponse> GetTracks(LastfmUser user, CancellationToken cancellationToken, int page = 0, int limit = 200)
-        {
-            var request = new GetTracksRequest
-            {
-                User = user.Username,
-                ApiKey = Strings.Keys.LastfmApiKey,
-                Method = Strings.Methods.GetTracks,
-                Limit = limit,
-                Page = page,
-                Secure = true
-
             };
 
             return await Get<GetTracksRequest, GetTracksResponse>(request, cancellationToken);

@@ -18,6 +18,7 @@
     {
         public bool Scrobble        { get; set; }
         public bool SyncFavourites  { get; set; }
+        public bool SyncPlayCount   { get; set; }
         public bool AlternativeMode { get; set; }
     }
 }
