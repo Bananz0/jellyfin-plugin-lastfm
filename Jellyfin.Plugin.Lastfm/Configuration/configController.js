@@ -1,4 +1,4 @@
-const pluginId = "5e7fe7f0-b048-429e-a431-b1a7e69c930d";
+const pluginId = "f5cc9733-e4df-42f3-a950-12d62d5819cc";
 
 const configDefaults = {
     Username: "",
@@ -8,6 +8,7 @@ const configDefaults = {
     Options: {
         Scrobble: false,
         SyncFavourites: false,
+        SyncPlayCount: false,
         AlternativeMode: false
     }
 };
@@ -48,6 +49,7 @@ function getUIOptionsValues(page) {
     return {
         Scrobble: page.querySelector("#optionScrobble").checked,
         SyncFavourites: page.querySelector("#optionFavourite").checked,
+        SyncPlayCount: page.querySelector("#optionSyncPlayCount").checked,
         AlternativeMode: page.querySelector("#optionAltMode").checked
     };
 }
@@ -57,12 +59,15 @@ function populateInputs(page, userData) {
         userData && userData.Options ? userData.Options : {});
     var data = Object.assign({}, configDefaults, userData || {}, { Options: opts });
 
-    page.querySelector("#apiHost").value = config.LastfmApiHost || configDefaults.LastfmApiHost;
-    page.querySelector("#username").value = data.Username;
-    page.querySelector("#password").value = data.SessionKey;
-    page.querySelector("#optionScrobble").checked = data.Options.Scrobble;
-    page.querySelector("#optionFavourite").checked = data.Options.SyncFavourites;
-    page.querySelector("#optionAltMode").checked = data.Options.AlternativeMode;
+    page.querySelector("#apiKey").value    = config.ApiKey    || "";
+    page.querySelector("#apiSecret").value = config.ApiSecret || "";
+    page.querySelector("#apiHost").value   = config.LastfmApiHost || configDefaults.LastfmApiHost;
+    page.querySelector("#username").value  = data.Username;
+    page.querySelector("#password").value  = data.SessionKey;
+    page.querySelector("#optionScrobble").checked       = data.Options.Scrobble;
+    page.querySelector("#optionFavourite").checked      = data.Options.SyncFavourites;
+    page.querySelector("#optionSyncPlayCount").checked  = data.Options.SyncPlayCount;
+    page.querySelector("#optionAltMode").checked        = data.Options.AlternativeMode;
 }
 
 function onUserChange(page) {
@@ -79,12 +84,16 @@ function doSave(page) {
 function save(page, username, password) {
     var userConfig = getCurrentSelectedUser(page);
     var previousApiHost = config.LastfmApiHost || configDefaults.LastfmApiHost;
-    var newApiHost = page.querySelector("#apiHost").value || configDefaults.LastfmApiHost;
-    var apiHostChanged = previousApiHost.trim().toLowerCase() !== newApiHost.trim().toLowerCase();
+    var newApiHost      = page.querySelector("#apiHost").value    || configDefaults.LastfmApiHost;
+    var newApiKey       = page.querySelector("#apiKey").value     || "";
+    var newApiSecret    = page.querySelector("#apiSecret").value  || "";
+    var apiHostChanged  = previousApiHost.trim().toLowerCase() !== newApiHost.trim().toLowerCase();
 
     config.LastfmApiHost = newApiHost;
 
     if (!username && !password) {
+        config.ApiKey    = newApiKey;
+        config.ApiSecret = newApiSecret;
         doSave(page);
         return;
     }
@@ -101,6 +110,8 @@ function save(page, username, password) {
     Dashboard.showLoadingMsg();
 
     if (userConfig.SessionKey === password && !apiHostChanged) {
+        config.ApiKey    = newApiKey;
+        config.ApiSecret = newApiSecret;
         doSave(page);
         return;
     }
@@ -108,14 +119,22 @@ function save(page, username, password) {
     ApiClient.ajax({
         type: "POST",
         url: ApiClient.getUrl("Lastfm/Login"),
-        data: JSON.stringify({ username: username, password: password, apiHost: config.LastfmApiHost }),
+        data: JSON.stringify({
+            username:  username,
+            password:  password,
+            apiHost:   newApiHost,
+            apiKey:    newApiKey,
+            apiSecret: newApiSecret
+        }),
         contentType: "application/json",
         dataType: "json"
     }).then(function (data) {
         Dashboard.hideLoadingMsg();
         if (data && data.session) {
-            userConfig.Username = data.session.name;
+            userConfig.Username   = data.session.name;
             userConfig.SessionKey = data.session.key;
+            config.ApiKey         = newApiKey;
+            config.ApiSecret      = newApiSecret;
             doSave(page);
         } else {
             Dashboard.alert((data && data.message) || "Something went wrong");

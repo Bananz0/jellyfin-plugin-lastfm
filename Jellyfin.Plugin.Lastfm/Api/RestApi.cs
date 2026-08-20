@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using System.Net.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -25,10 +25,10 @@ namespace Jellyfin.Plugin.Lastfm.Api
         public object CreateMobileSession([FromBody] LastFMUser lastFMUser)
         {
             _logger.LogInformation("Fetching Last.fm mobilesession auth for Username={0}", lastFMUser.Username);
-            return ExecuteWithApiHostOverride(lastFMUser.ApiHost, () => _apiClient.RequestSession(lastFMUser.Username, lastFMUser.Password).Result);
+            return ExecuteWithConfigOverride(lastFMUser, () => _apiClient.RequestSession(lastFMUser.Username, lastFMUser.Password).Result);
         }
 
-        private static object ExecuteWithApiHostOverride(string apiHost, Func<object> action)
+        private static object ExecuteWithConfigOverride(LastFMUser request, Func<object> action)
         {
             lock (_apiHostLock)
             {
@@ -38,20 +38,30 @@ namespace Jellyfin.Plugin.Lastfm.Api
                     return action();
                 }
 
-                var originalHost = config.LastfmApiHost;
+                var originalHost   = config.LastfmApiHost;
+                var originalKey    = config.ApiKey;
+                var originalSecret = config.ApiSecret;
 
-                if (!string.IsNullOrWhiteSpace(apiHost))
-                {
-                    config.LastfmApiHost = apiHost;
-                }
+                if (!string.IsNullOrWhiteSpace(request.ApiHost))
+                    config.LastfmApiHost = request.ApiHost;
+                if (!string.IsNullOrWhiteSpace(request.ApiKey))
+                    config.ApiKey = request.ApiKey;
+                if (!string.IsNullOrWhiteSpace(request.ApiSecret))
+                    config.ApiSecret = request.ApiSecret;
 
                 try
                 {
-                    return action();
+                    var result = action();
+                    // Persist so all future API calls use the supplied key/secret
+                    Plugin.Instance.SaveConfiguration();
+                    return result;
                 }
-                finally
+                catch
                 {
                     config.LastfmApiHost = originalHost;
+                    config.ApiKey        = originalKey;
+                    config.ApiSecret     = originalSecret;
+                    throw;
                 }
             }
         }
@@ -59,8 +69,10 @@ namespace Jellyfin.Plugin.Lastfm.Api
 
     public class LastFMUser
     {
-        public string Username { get; set; }
-        public string Password { get; set; }
-        public string ApiHost { get; set; }
+        public string Username  { get; set; }
+        public string Password  { get; set; }
+        public string ApiHost   { get; set; }
+        public string ApiKey    { get; set; }
+        public string ApiSecret { get; set; }
     }
 }

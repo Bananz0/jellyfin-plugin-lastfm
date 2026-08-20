@@ -5,12 +5,19 @@
 
     public class GetTracksResponse : BaseResponse
     {
+        // library.getTracks wraps in "tracks"; user.getTopTracks wraps in "toptracks"
         [JsonPropertyName("tracks")]
         public GetTracksTracks Tracks { get; set; }
 
+        [JsonPropertyName("toptracks")]
+        public GetTracksTracks TopTracks { get; set; }
+
+        public GetTracksTracks ResolvedTracks => Tracks ?? TopTracks;
+
         public bool HasTracks()
         {
-            return Tracks != null && Tracks.Tracks != null && Tracks.Tracks.Count > 0;
+            var t = ResolvedTracks;
+            return t != null && t.Tracks != null && t.Tracks.Count > 0;
         }
     }
 

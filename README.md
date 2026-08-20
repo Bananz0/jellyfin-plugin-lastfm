@@ -6,6 +6,8 @@ This repository continues the work of the original Jellyfin Last.fm plugin maint
 
 The plugin was originally migrated from the Emby repository and adapted to function within the Jellyfin ecosystem.
 
+The Bananz0 build has its own plugin ID, so Jellyfin will not replace it with a higher-version package from another Last.fm repository.
+
 ## 🔧 Installation and Configuration
 
 Install the plugin via the Jellyfin plugin repository. Navigate to the **Plugins** section of the admin dashboard and add the following repository to receive stable builds of this plugin:
@@ -30,11 +32,16 @@ It is used only to authenticate with Last.fm and obtain a **session key**, which
 
 If a user changes their Last.fm password, you may need to reconfigure the plugin for that user.
 
+You must also provide the API key and shared secret from your own [Last.fm API application](https://www.last.fm/api/account/create). The credentials embedded in older upstream builds have been suspended by Last.fm and can no longer authenticate signed requests.
+
 - **Enable Scrobbling for this user?**  
   Enables or disables Last.fm scrobbling for the selected Jellyfin user.
 
 - **Sync favourites for this user?**  
   Enables two-way synchronization between Jellyfin favourites and Last.fm loved tracks.
+
+- **Sync play counts for this user?**
+  Enables the optional scheduled play-count import. This changes Jellyfin user playback data and is disabled by default.
 
 - **Use alternative mode and scrobble on `UserDataSaved` events instead of `PlaybackStopped`?**
 

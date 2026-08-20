@@ -1,12 +1,20 @@
 [
     {
-        "guid": "5e7fe7f0-b048-429e-a431-b1a7e69c930d",
-        "name": "Last.fm",
+        "guid": "f5cc9733-e4df-42f3-a950-12d62d5819cc",
+        "name": "Last.fm (Bananz0)",
         "description": "Scrobble Last.fm plays with Jellyfin",
         "overview": "A plugin that scrobbles your Jellyfin music to Last.fm",
-        "owner": "danielfariati",
+        "owner": "Bananz0",
         "category": "music",
         "versions": [
+            {
+                "version": "12.0.0.11",
+                "changelog": "Jellyfin 12 compatibility and configurable Last.fm API credentials",
+                "targetAbi": "12.0.0.0",
+                "sourceUrl": "https://github.com/Bananz0/jellyfin-plugin-lastfm/releases/download/12.0.0.11/lastfm_12.0.0.11.zip",
+                "checksum": "146d08d1ec435b1d17279bf913a44073",
+                "timestamp": "2026-08-21T00:00:00Z"
+            },
             {
                 "version": "10.11.0.5",
                 "changelog": "Allowing to change the API Host (Libre.fm support) + Masking password in config page",

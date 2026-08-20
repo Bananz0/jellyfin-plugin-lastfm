@@ -25,10 +25,10 @@
             Instance = this;
         }
 
-        public override Guid Id { get; } = new Guid("5e7fe7f0-b048-429e-a431-b1a7e69c930d");
+        public override Guid Id { get; } = new Guid("f5cc9733-e4df-42f3-a950-12d62d5819cc");
 
         public override string Name
-            => "Last.fm";
+            => "Last.fm (Bananz0)";
 
         public override string Description
             => "Scrobble your music collection to Last.fm";
